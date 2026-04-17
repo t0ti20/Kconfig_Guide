@@ -1,0 +1,40 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# Generated files
+include/generated/
+*.o
+*.o.d
+*.a
+*.so
+*.exe
+*.out
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Kconfig generated files
+.config
+.config.old
+autoconf.h
+
+# Compilation database
+compile_commands.json
+
+# Logs and temporary files
+*.log
+*.tmp

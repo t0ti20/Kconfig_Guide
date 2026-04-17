@@ -1,0 +1,313 @@
+mainmenu "Professional Application Configuration"
+
+# =============================================================================
+# Output Settings - Demonstrates strings, booleans, and choice groups
+# =============================================================================
+
+menu "Output Settings"
+
+config ENABLE_OUTPUT
+    bool "Enable console output"
+    default y
+    help
+      Enable or disable all console output from the application.
+
+      When enabled, the application will print messages to stdout.
+      When disabled, the application runs silently.
+
+      Type: Boolean (y/n)
+
+config GREETING_MESSAGE
+    string "Primary greeting message"
+    default "Hello, World!"
+    depends on ENABLE_OUTPUT
+    help
+      The main greeting text displayed when the application starts.
+
+      This string is embedded into the binary at compile time.
+      Maximum recommended length: 256 characters.
+
+      Examples: "Hello", "Welcome", "Greetings"
+
+config SECONDARY_MESSAGE
+    string "Secondary message (optional)"
+    default ""
+    depends on ENABLE_OUTPUT
+    help
+      An optional second line of text printed after the greeting.
+      Leave empty to disable secondary message.
+
+      Example: "Have a great day!"
+
+config USE_COLORS
+    bool "Enable colored output"
+    default y
+    depends on ENABLE_OUTPUT
+    help
+      Use ANSI escape codes to colorize console output.
+
+      Note: Color support depends on your terminal emulator.
+      Disable if you see garbled output or are redirecting to files.
+
+choice
+    prompt "Text color scheme"
+    default COLOR_GREEN
+    depends on USE_COLORS
+    help
+      Select the primary color for text output using ANSI codes.
+
+config COLOR_RED
+    bool "Red"
+    help
+      Use red color (ANSI: \033[31m)
+
+config COLOR_GREEN
+    bool "Green"
+    help
+      Use green color (ANSI: \033[32m)
+
+config COLOR_YELLOW
+    bool "Yellow"
+    help
+      Use yellow color (ANSI: \033[33m)
+
+config COLOR_BLUE
+    bool "Blue"
+    help
+      Use blue color (ANSI: \033[34m)
+
+config COLOR_MAGENTA
+    bool "Magenta"
+    help
+      Use magenta color (ANSI: \033[35m)
+
+config COLOR_CYAN
+    bool "Cyan"
+    help
+      Use cyan color (ANSI: \033[36m)
+
+endchoice
+
+config BOLD_TEXT
+    bool "Use bold/bright text"
+    default n
+    depends on USE_COLORS
+    help
+      Apply bold weight to colored text (ANSI: \033[1m).
+      Makes text more prominent on most terminals.
+
+config VERBOSE_MODE
+    bool "Verbose output mode"
+    default n
+    depends on ENABLE_OUTPUT
+    help
+      Print additional debug information including:
+      - Configuration values
+      - Build timestamp
+      - System information
+
+endmenu  # Output Settings
+
+# =============================================================================
+# Timing & Performance - Demonstrates integers, ranges, and hex values
+# =============================================================================
+
+menu "Timing & Performance"
+
+config REPEAT_COUNT
+    int "Number of times to repeat the message"
+    range 1 100
+    default 1
+    help
+      How many times to print the greeting message.
+
+      Valid range: 1 to 100
+      Useful for testing or demonstration purposes.
+
+config DELAY_MS
+    int "Delay between repetitions (milliseconds)"
+    range 0 5000
+    default 0
+    depends on REPEAT_COUNT > 1
+    help
+      Time to wait between each message repetition.
+
+      Valid range: 0 to 5000 ms (0 to 5 seconds)
+      Set to 0 for no delay.
+
+config BUFFER_SIZE
+    hex "Internal buffer size (bytes)"
+    range 0x100 0x10000
+    default 0x1000
+    help
+      Size of the internal message buffer in hexadecimal.
+
+      Valid range: 0x100 (256) to 0x10000 (65536) bytes
+      Default: 0x1000 (4096 bytes)
+
+      Larger buffers support longer messages but use more memory.
+
+endmenu  # Timing & Performance
+
+# =============================================================================
+# Advanced Features - Demonstrates tristate and complex dependencies
+# =============================================================================
+
+menu "Advanced Features"
+
+config ENABLE_LOGGING
+    bool "Enable file logging"
+    default n
+    help
+      Write output to a log file in addition to console.
+
+      When enabled, all messages are appended to the configured log file.
+      The file is created if it doesn't exist.
+
+config LOG_FILENAME
+    string "Log file path"
+    default "app.log"
+    depends on ENABLE_LOGGING
+    help
+      Path to the log file (relative or absolute).
+
+      Examples:
+        - "app.log" (current directory)
+        - "/var/log/myapp.log" (absolute path)
+        - "logs/output.txt" (subdirectory)
+
+config TIMESTAMP_FORMAT
+    bool "Add timestamps to log entries"
+    default y
+    depends on ENABLE_LOGGING
+    help
+      Prefix each log line with ISO 8601 timestamp.
+      Format: YYYY-MM-DD HH:MM:SS
+
+config UPPERCASE_MODE
+    bool "Convert output to uppercase"
+    default n
+    depends on ENABLE_OUTPUT
+    help
+      Transform all text to uppercase before printing.
+      Applied after color formatting.
+
+config BORDER_STYLE
+    bool "Draw decorative borders around output"
+    default n
+    depends on ENABLE_OUTPUT
+    help
+      Surround the output with ASCII box-drawing characters.
+      Creates a visually distinct message block.
+
+choice
+    prompt "Border character set"
+    default BORDER_ASCII
+    depends on BORDER_STYLE
+    help
+      Select the character style for drawing borders.
+
+config BORDER_ASCII
+    bool "ASCII (+ - |)"
+    help
+      Use basic ASCII characters: + - | for maximum compatibility
+
+config BORDER_UNICODE
+    bool "Unicode (Box Drawing)"
+    help
+      Use Unicode box-drawing characters: ─ │ ┌ ┐ └ ┘
+      Requires UTF-8 terminal support
+
+endchoice
+
+endmenu  # Advanced Features
+
+# =============================================================================
+# Application Metadata - Demonstrates conditional defaults
+# =============================================================================
+
+menu "Application Metadata"
+
+config APP_VERSION
+    string "Application version string"
+    default "1.0.0"
+    help
+      Semantic version string displayed in verbose mode.
+      Format: MAJOR.MINOR.PATCH
+
+config APP_AUTHOR
+    string "Application author name"
+    default "KConfig Demo"
+    help
+      Author or organization name shown in verbose output.
+
+config SHOW_COPYRIGHT
+    bool "Display copyright notice"
+    default n
+    help
+      Print copyright information in verbose mode.
+
+config COPYRIGHT_YEAR
+    string "Copyright year"
+    default "2026"
+    depends on SHOW_COPYRIGHT
+    help
+      Year or year range for copyright notice.
+      Examples: "2026" or "2024-2026"
+
+endmenu  # Application Metadata
+
+# =============================================================================
+# Debugging & Development - Demonstrates dependencies and validation
+# =============================================================================
+
+menu "Debugging & Development"
+
+config DEBUG_MODE
+    bool "Enable debug mode"
+    default n
+    help
+      Compile with debugging features enabled.
+
+      In debug mode, additional diagnostics are shown including:
+      - Memory allocation info
+      - Configuration dump
+      - Internal state
+
+config SHOW_CONFIG_VALUES
+    bool "Print all config values at startup"
+    default n
+    depends on DEBUG_MODE
+    help
+      Display a formatted table of all Kconfig settings.
+      Useful for verifying configuration correctness.
+
+config MEMORY_STATS
+    bool "Show memory statistics"
+    default n
+    depends on DEBUG_MODE
+    help
+      Print buffer usage and memory allocation details.
+
+config ASSERT_ENABLED
+    bool "Enable runtime assertions"
+    default y if DEBUG_MODE
+    default n
+    help
+      Include runtime checks for buffer overflows and invalid states.
+
+      Recommended for development builds.
+      Can be disabled in production for performance.
+
+config MAX_MESSAGE_LENGTH
+    int "Maximum message length (safety limit)"
+    range 10 4096
+    default 256
+    depends on ASSERT_ENABLED
+    help
+      Maximum allowed length for combined messages.
+
+      If assertions are enabled, messages exceeding this length
+      will trigger a runtime error instead of buffer overflow.
+
+endmenu  # Debugging & Development
